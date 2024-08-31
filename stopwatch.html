@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #28a745; /* Green background */
+        }
+
+        .stopwatch {
+            text-align: center;
+        }
+
+        #display {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 5px;
+            border: none;
+            background-color: blue;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background-color: white;
+            cursor: not-allowed;
+        }
+
+        #laps {
+            margin-top: 20px;
+            font-size: 20px;
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #laps li {
+            margin: 5px 0;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+        <div class="stopwatch">
+        <h1 style="color:white;font-family:Arial Rounded MT;"> STOPWATCH</h1><br><br>
+        <div id="display">00:00:00</div>
+        <button id="start">Start</button>
+        <button id="pause">Pause</button>
+        <button id="lap">Lap</button>
+        <button id="reset">Reset</button>
+        <ul id="laps"></ul>
+    </div>
+    <script>
+        let [milliseconds, seconds, minutes] = [0, 0, 0];
+        let timerRef = document.getElementById('display');
+        let lapList = document.getElementById('laps');
+        let int = null;
+
+        document.getElementById('start').addEventListener('click', () => {
+            if (int !== null) {
+                clearInterval(int);
+            }
+            int = setInterval(displayTimer, 1);
+        });
+
+        document.getElementById('pause').addEventListener('click', () => {
+            clearInterval(int);
+        });
+
+        document.getElementById('reset').addEventListener('click', () => {
+            clearInterval(int);
+            [milliseconds, seconds, minutes] = [0, 0, 0];
+            timerRef.innerHTML = '00:00:00';
+            lapList.innerHTML = ''; // Clear lap times
+        });
+
+        document.getElementById('lap').addEventListener('click', () => {
+            let m = minutes < 10 ? "0" + minutes : minutes;
+            let s = seconds < 10 ? "0" + seconds : seconds;
+            let ms = milliseconds < 10 ? "00" + milliseconds : milliseconds < 100 ? "0" + milliseconds : milliseconds;
+            let lapTime = `${m}:${s}:${ms}`;
+
+            let lapItem = document.createElement('li');
+            lapItem.innerText = lapTime;
+            lapList.appendChild(lapItem);
+        });
+
+        function displayTimer() {
+            milliseconds += 10;
+            if (milliseconds == 1000) {
+                milliseconds = 0;
+                seconds++;
+                if (seconds == 60) {
+                    seconds = 0;
+                    minutes++;
+                }
+            }
+
+            let m = minutes < 10 ? "0" + minutes : minutes;
+            let s = seconds < 10 ? "0" + seconds : seconds;
+            let ms = milliseconds < 10 ? "00" + milliseconds : milliseconds < 100 ? "0" + milliseconds : milliseconds;
+
+            timerRef.innerHTML = `${m}:${s}:${ms}`;
+        }
+    </script>
+</body>
+</html>
